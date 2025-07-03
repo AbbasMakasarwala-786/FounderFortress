@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Auto Upload Q&A</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+
+    .left {
+      width: 30%;
+      background: #f0f0f0;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+    }
+
+    .right {
+      width: 70%;
+      padding: 20px;
+      overflow-y: auto;
+      background: #fff;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .output {
+      white-space: pre-wrap;
+      margin-top: 10px;
+      font-family: monospace;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-weight: bold;
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="left">
+    <h3>Upload Document</h3>
+    <input type="file" id="fileInput" />
+    <p id="docStatus" class="status"></p>
+
+    <h3>Ask a Question</h3>
+    <textarea id="questionInput" placeholder="Enter your question here..."></textarea>
+    <button onclick="askQuestion()">Ask</button>
+  </div>
+
+  <div class="right">
+    <h3>Answer</h3>
+    <div id="output" class="output">No answer yet.</div>
+  </div>
+
+  <script>
+    let currentDocId = null;
+
+    document.getElementById('fileInput').addEventListener('change', async (event) => {
+      const file = event.target.files[0];
+      const statusEl = document.getElementById('docStatus');
+
+      if (!file) {
+        statusEl.textContent = '⚠️ No file selected.';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('http://127.0.0.1:8000/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.doc_id) {
+          currentDocId = data.doc_id;
+          statusEl.textContent = `📄 Uploaded: ${data.doc_id}`;
+          statusEl.classList.remove('error');
+        } else {
+          currentDocId = null;
+          statusEl.textContent = '❌ No doc_id returned from server';
+          statusEl.classList.add('error');
+        }
+      } catch (err) {
+        console.error('Upload failed:', err);
+        currentDocId = null;
+        statusEl.textContent = '❌ Upload failed';
+        statusEl.classList.add('error');
+      }
+    });
+
+    async function askQuestion() {
+      const question = document.getElementById('questionInput').value.trim();
+      const output = document.getElementById('output');
+
+      if (!currentDocId) {
+        output.textContent = '⚠️ Upload a document first.';
+        return;
+      }
+
+      if (!question) {
+        output.textContent = '⚠️ Enter a question first.';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('doc_id', currentDocId);
+      formData.append('question', question);
+
+      try {
+        const res = await fetch('http://127.0.0.1:8000/ask', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        output.textContent = data.result || '⚠️ No answer returned.';
+      } catch (err) {
+        console.error('Ask failed:', err);
+        output.textContent = '❌ Failed to get answer';
+      }
+    }
+  </script>
+</body>
+</html>

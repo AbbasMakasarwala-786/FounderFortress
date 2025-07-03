@@ -1,0 +1,13 @@
+langchain
+langchain-groq
+langchain-community
+langgraph
+chromadb
+ipykernel
+setuptools
+docling
+sentence-transformers
+tiktoken
+fastapi
+uvicorn
+python-multipart
