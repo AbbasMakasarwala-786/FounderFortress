@@ -7,7 +7,7 @@ from src.generation.graders import Graders
 from docling.document_converter import DocumentConverter
 from src.generation.llm_router import llm_router
 from langgraph.graph import END, StateGraph, START
-
+from config.path_config import *
 logger = get_logger(__name__)
 
 class GraphState(TypedDict):

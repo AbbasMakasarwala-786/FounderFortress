@@ -1,7 +1,6 @@
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 import os
-from config.path_config import UPLOAD_DOC
 from docling.document_converter import DocumentConverter
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from src.logger import get_logger
