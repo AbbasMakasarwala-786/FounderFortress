@@ -64,4 +64,4 @@ if __name__ =="__main__":
     Retriever = Retriever('test_docs.docx')
     Retriever.doc_vec_storing()
     output= Retriever.get_retriever()
-    print(output.invoke("Legally Binding"))
+    print(output.invoke("FounderFortress/data/uploaded_data/Legal_documents_are_written_records_that_outline_agreements,_permissions,_or_facts_with_legal_significance.docx"))

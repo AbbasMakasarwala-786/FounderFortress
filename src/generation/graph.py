@@ -150,18 +150,17 @@ class RAGGraph:
         return app
 
 
-# path = 'test_docs.docx'
-# pipeline = RAGGraph(path)
-# app = pipeline.build_graph()
-# inputs = {
-#     "question": "What is Legally Binding",
-#     "document_path": path
-# }
+path = 'C:\\Users\\91835\\OneDrive\\Desktop\\Founders Fortress\\FounderFortress\\data\\uploaded_data\\Legal_documents_are_written_records_that_outline_agreements,_permissions,_or_facts_with_legal_significance.docx'
+pipeline = RAGGraph(path)
+app = pipeline.build_graph()
+inputs = {
+    "question": "What is the document about?",
+    "document_path": path
+}
 
-# for output in app.stream(inputs):
-#     for key, value in output.items():
-#         pprint(f"Node '{key}':")
-#     pprint("\n---\n")
+for token, metadata in app.stream(inputs,stream_mode="messages"):
+    print("Token",token.content)
+    # print("Meta data",metadata)
 
 # pprint(value["generation"])
 # print("\n \n from app.invoke \n", app.invoke(inputs))
